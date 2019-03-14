@@ -3,10 +3,10 @@
     <p>私のアドレス: {{ myAddress }}</p>
     <div class="sushi-wrapper">
       <div class="sushi-box" v-for="sushi in sushiList" :key="sushi.id">
-        <p>{{ sushi.status }}</p>
-        <p>{{ sushi.price }}</p>
-        <p>{{ sushi.owner }}</p>
+        <p>{{ myAddress === sushi.owner ? '私のおすし' : 'だれかのおすし' }}</p>
         <p>{{ sushi.dna }}</p>
+        <p v-if="sushi.status === 'sell'">販売中</p>
+        <p v-if="sushi.status === 'sell'">{{ sushi.price }} Gari</p>
       </div>
     </div>
   </div>
