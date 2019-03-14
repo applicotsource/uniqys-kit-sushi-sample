@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <p>私のアドレス: {{ myAddress }}</p>
+    <p>{{ myGari }} Gari</p>
     <div class="sushi-wrapper">
       <div class="sushi-box" v-for="sushi in sushiList" :key="sushi.id">
         <p>{{ myAddress === sushi.owner ? '私のおすし' : 'だれかのおすし' }}</p>
@@ -28,6 +29,7 @@ export default {
   data() {
     return {
       myAddress: '0xhogehoge',
+      myGari: 10000,
       sushiList: [
         { // 自分の販売中じゃないおすし
           id: 1,
