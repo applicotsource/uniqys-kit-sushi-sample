@@ -1,7 +1,14 @@
 <template>
   <div id="app">
     <p>私のアドレス: {{ myAddress }}</p>
-    <p>こんにちは！</p>
+    <div class="sushi-wrapper">
+      <div v-for="sushi in sushiList" :key="sushi.id">
+        <p>{{ sushi.status }}</p>
+        <p>{{ sushi.price }}</p>
+        <p>{{ sushi.owner }}</p>
+        <p>{{ sushi.dna }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
