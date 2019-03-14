@@ -9,6 +9,10 @@
         <p>{{ code(sushi) }}</p>
         <p v-if="sushi.status === 'sell'">販売中</p>
         <p v-if="sushi.status === 'sell'">{{ sushi.price }} Gari</p>
+        <div v-if="myAddress === sushi.owner && sushi.status === 'normal'">
+          <input type="text" placeholder="販売額" v-model="price[sushi.id]">
+          <button @click="sell(sushi, price[sushi.id])">売る！</button>
+        </div>
       </div>
     </div>
   </div>
@@ -37,11 +41,16 @@ export default {
         dna: Math.random().toString(36) // ランダムな文字列を生成
       })
     },
+    sell(sushi, price) {
+      sushi.status = 'sell'
+      sushi.price = price
+    },
   },
   data() {
     return {
       myAddress: '0xhogehoge',
       myGari: 10000,
+      price: [],
       sushiList: [
         { // 自分の販売中じゃないおすし
           id: 1,
