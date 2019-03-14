@@ -2,7 +2,7 @@
   <div id="app">
     <p>私のアドレス: {{ myAddress }}</p>
     <div class="sushi-wrapper">
-      <div v-for="sushi in sushiList" :key="sushi.id">
+      <div class="sushi-box" v-for="sushi in sushiList" :key="sushi.id">
         <p>{{ sushi.status }}</p>
         <p>{{ sushi.price }}</p>
         <p>{{ sushi.owner }}</p>
@@ -61,5 +61,15 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.sushi-wrapper {
+  flex-wrap: wrap;
+  display: flex;
+}
+.sushi-box {
+  width: 200px;
+  height: 300px;
+  margin: 8px;
+  border: 1px solid black;
 }
 </style>
