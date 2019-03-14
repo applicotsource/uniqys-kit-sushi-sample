@@ -1,12 +1,18 @@
 <template>
   <div id="app">
+    <p>私のアドレス: {{ myAddress }}</p>
     <p>こんにちは！</p>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  data() {
+    return {
+      myAddress: '0xhogehoge',
+    }
+  }
 }
 </script>
 
