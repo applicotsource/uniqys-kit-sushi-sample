@@ -53,16 +53,10 @@ export default {
         spice: dna.readUInt16BE(8) % 10,
       }
     },
-    generate() {
-      const newId = this.sushiList.length + 1
-      this.myGari -= 100
-      this.sushiList.unshift({
-        id: newId,
-        status: 'normal',
-        price: 0,
-        owner: this.myAddress,
-        dna: Math.random().toString(36) // ランダムな文字列を生成
-      })
+    async generate() {
+      await this.client.post('/api/generate', {}, { sign: true })
+      this.fetchSushiList()
+      this.fetchMyGari()
     },
     sell(sushi, price) {
       sushi.status = 'sell'

@@ -10,6 +10,8 @@ const DB_PORT = 5652               // inner memcachedのポート番号
 const INNER_API_HOST = 'localhost' // inner apiのホスト名
 const INNER_API_PORT = 5651        // inner apiのポート番号
 
+const OPERATOR_ADDRESS = 'b8e6493bf64cae685095b162c4a4ee0645cde586'
+
 const app = express() // expressを使う準備
 app.use(bodyParser())
 
@@ -44,6 +46,8 @@ app.post('/api/generate', async (req, res) => {
     timestamp: timestamp,
     blockhash: blockhash
   }
+
+  await transferGari(sender, OPERATOR_ADDRESS, 100)
 
   memcached.set(`sushi:${count}`, newSushi, 0, (err) => {
     if (err) {
@@ -99,5 +103,13 @@ app.post('/api/tap', async (req, res) => {
   await axios.put(uri, JSON.stringify([10000]), { headers: { 'Content-Type': 'application/json' } })
   res.send()
 })
+
+async function transferGari(from, to, gari) {
+  return new Promise(async (resolve) => {
+    const uri = `http://${INNER_API_HOST}:${INNER_API_PORT}/accounts/${from}/transfer`
+    await axios.post(uri, JSON.stringify({ to, value: parseInt(gari) }), { headers: { 'Content-Type': 'application/json' } })
+    resolve()
+  })
+}
 
 app.listen(APP_PORT, APP_HOST) // listenを開始する
