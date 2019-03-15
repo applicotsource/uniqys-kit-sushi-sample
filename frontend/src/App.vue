@@ -32,6 +32,7 @@ export default {
   name: 'app',
   created() {
     this.fetchMyAddress()
+    this.fetchMyGari()
     this.fetchSushiList()
   },
   methods: {
@@ -71,6 +72,11 @@ export default {
       sushi.status = 'normal'
       sushi.price = 0
       sushi.owner = this.myAddress
+    },
+    async fetchMyGari() {
+      const response = await this.client.get('/api/gari', { params: { address: this.myAddress } })
+      const { balance } = response.data
+      this.myGari = balance
     },
   },
   data() {
