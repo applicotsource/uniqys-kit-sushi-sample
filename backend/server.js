@@ -2,6 +2,7 @@ const keccak = require('keccak')
 const express = require("express")
 const bodyParser = require("body-parser")
 const Memcached = require("memcached")
+const axios = require('axios')
 
 const APP_HOST = '0.0.0.0'         // backendサーバが動作するホスト名
 const APP_PORT = 5650              // backendサーバが動作するポート番号
@@ -151,5 +152,7 @@ app.post('/api/buy', async (req, res) => {
   await transferGari(sender, sushi.owner, sushi.price)
   res.send()
 })
+
+app.use('/', express.static('frontend/dist'))
 
 app.listen(APP_PORT, APP_HOST) // listenを開始する
