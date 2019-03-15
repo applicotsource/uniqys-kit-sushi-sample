@@ -3,6 +3,7 @@
     <p>私のアドレス: {{ myAddress }}</p>
     <p>{{ myGari }} Gari</p>
     <button @click="generate()">にぎる</button>
+    <button @click="tap()">Gariをもらう</button>
     <div class="sushi-wrapper">
       <div class="sushi-box" v-for="sushi in sushiList" :key="sushi.id">
         <p>{{ myAddress === sushi.owner ? '私のおすし' : 'だれかのおすし' }}</p>
@@ -27,9 +28,23 @@
 </template>
 
 <script>
+import { EasyClientForBrowser } from '@uniqys/easy-client'
 export default {
   name: 'app',
+  created() {
+    this.fetchMyAddress()
+    this.fetchMyGari()
+    this.fetchSushiList()
+  },
   methods: {
+    async fetchMyAddress() {
+      this.myAddress = this.client.address.toString()
+    },
+    async fetchSushiList() {
+      const response = await this.client.get('/api/sushiList')
+      const { sushiList } = response.data
+      this.sushiList = sushiList
+    },
     code(sushi) {
       const dna = new Buffer(sushi.dna)
       return {
@@ -38,63 +53,38 @@ export default {
         spice: dna.readUInt16BE(8) % 10,
       }
     },
-    generate() {
-      const newId = this.sushiList.length + 1
-      this.myGari -= 100
-      this.sushiList.unshift({
-        id: newId,
-        status: 'normal',
-        price: 0,
-        owner: this.myAddress,
-        dna: Math.random().toString(36) // ランダムな文字列を生成
-      })
+    async generate() {
+      await this.client.post('/api/generate', {}, { sign: true })
+      this.fetchSushiList()
+      this.fetchMyGari()
     },
-    sell(sushi, price) {
-      sushi.status = 'sell'
-      sushi.price = price
+    async sell(sushi, price) {
+      await this.client.post('/api/sell', { sushi, price }, { sign: true })
+      this.fetchSushiList()
+      this.fetchMyGari()
     },
-    buy(sushi) {
-      this.myGari -= sushi.price
-      sushi.status = 'normal'
-      sushi.price = 0
-      sushi.owner = this.myAddress
+    async buy(sushi) {
+      await this.client.post('/api/buy', { sushi }, { sign: true })
+      this.fetchSushiList()
+      this.fetchMyGari()
+    },
+    async fetchMyGari() {
+      const response = await this.client.get('/api/gari', { params: { address: this.myAddress } })
+      const { balance } = response.data
+      this.myGari = balance
+    },
+    async tap() {
+      await this.client.post('/api/tap', {}, { sign: true })
+      this.fetchMyGari()
     },
   },
   data() {
     return {
-      myAddress: '0xhogehoge',
-      myGari: 10000,
+      client: new EasyClientForBrowser('http://localhost:8080'),
+      myAddress: '',
+      myGari: 0,
       price: [],
-      sushiList: [
-        { // 自分の販売中じゃないおすし
-          id: 1,
-          status: 'normal',
-          price: 0,
-          owner: '0xhogehoge',
-          dna: 'irjiorgoiwegjioergj'
-        },
-        { // 自分の販売中のおすし
-          id: 2,
-          status: 'sell',
-          price: 0,
-          owner: '0xhogehoge',
-          dna: '0rtihij6i45h4jgioijerf'
-        },
-        { // 他の人の販売中じゃないおすし
-          id: 3,
-          status: 'normal',
-          price: 0,
-          owner: '0xhugahuga',
-          dna: 'x3igwegjsij5gjj35p4hi45h'
-        },
-        { // 他の人の販売中のおすし
-          id: 4,
-          status: 'sell',
-          price: 5000,
-          owner: '0xhugahuga',
-          dna: 'irjiorgoiwegjioergj'
-        },
-      ]
+      sushiList: []
     }
   }
 }
