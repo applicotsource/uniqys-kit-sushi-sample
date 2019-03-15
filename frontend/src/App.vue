@@ -27,9 +27,22 @@
 </template>
 
 <script>
+import { EasyClientForBrowser } from '@uniqys/easy-client'
 export default {
   name: 'app',
+  created() {
+    this.fetchMyAddress()
+    this.fetchSushiList()
+  },
   methods: {
+    async fetchMyAddress() {
+      this.myAddress = this.client.address.toString()
+    },
+    async fetchSushiList() {
+      const response = await this.client.get('/api/sushiList')
+      const { sushiList } = response.data
+      this.sushiList = sushiList
+    },
     code(sushi) {
       const dna = new Buffer(sushi.dna)
       return {
@@ -62,39 +75,11 @@ export default {
   },
   data() {
     return {
-      myAddress: '0xhogehoge',
-      myGari: 10000,
+      client: new EasyClientForBrowser('http://localhost:8080'),
+      myAddress: '',
+      myGari: 0,
       price: [],
-      sushiList: [
-        { // 自分の販売中じゃないおすし
-          id: 1,
-          status: 'normal',
-          price: 0,
-          owner: '0xhogehoge',
-          dna: 'irjiorgoiwegjioergj'
-        },
-        { // 自分の販売中のおすし
-          id: 2,
-          status: 'sell',
-          price: 0,
-          owner: '0xhogehoge',
-          dna: '0rtihij6i45h4jgioijerf'
-        },
-        { // 他の人の販売中じゃないおすし
-          id: 3,
-          status: 'normal',
-          price: 0,
-          owner: '0xhugahuga',
-          dna: 'x3igwegjsij5gjj35p4hi45h'
-        },
-        { // 他の人の販売中のおすし
-          id: 4,
-          status: 'sell',
-          price: 5000,
-          owner: '0xhugahuga',
-          dna: 'irjiorgoiwegjioergj'
-        },
-      ]
+      sushiList: []
     }
   }
 }
