@@ -130,4 +130,26 @@ app.post('/api/sell', async (req, res) => {
   })
 })
 
+app.post('/api/buy', async (req, res) => {
+  const sender = req.header('uniqys-sender')
+  const { sushi } = req.body
+
+  const newSushi = Object.assign({}, sushi, {
+    status: 'normal',
+    owner: sender,
+    price: 0
+  })
+
+  await memcached.set(`sushi:${sushi.id}`, newSushi, 0, (err) => {
+    if (err) {
+      res.status(400).send(err)
+    }
+    else {
+      res.sendStatus(200)
+    }
+  })
+  await transferGari(sender, sushi.owner, sushi.price)
+  res.send()
+})
+
 app.listen(APP_PORT, APP_HOST) // listenを開始する

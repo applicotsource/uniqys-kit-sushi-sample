@@ -63,11 +63,10 @@ export default {
       this.fetchSushiList()
       this.fetchMyGari()
     },
-    buy(sushi) {
-      this.myGari -= sushi.price
-      sushi.status = 'normal'
-      sushi.price = 0
-      sushi.owner = this.myAddress
+    async buy(sushi) {
+      await this.client.post('/api/buy', { sushi }, { sign: true })
+      this.fetchSushiList()
+      this.fetchMyGari()
     },
     async fetchMyGari() {
       const response = await this.client.get('/api/gari', { params: { address: this.myAddress } })
