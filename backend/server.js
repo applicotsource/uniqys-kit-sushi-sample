@@ -112,4 +112,22 @@ async function transferGari(from, to, gari) {
   })
 }
 
+app.post('/api/sell', async (req, res) => {
+  const { sushi, price } = req.body
+
+  const newSushi = Object.assign({}, sushi, {
+    status: 'sell',
+    price: price
+  })
+
+  memcached.set(`sushi:${sushi.id}`, newSushi, 0, (err) => {
+    if (err) {
+      res.status(400).send(err)
+    }
+    else {
+      res.sendStatus(200)
+    }
+  })
+})
+
 app.listen(APP_PORT, APP_HOST) // listenを開始する

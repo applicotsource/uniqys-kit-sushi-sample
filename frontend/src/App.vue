@@ -58,9 +58,10 @@ export default {
       this.fetchSushiList()
       this.fetchMyGari()
     },
-    sell(sushi, price) {
-      sushi.status = 'sell'
-      sushi.price = price
+    async sell(sushi, price) {
+      await this.client.post('/api/sell', { sushi, price }, { sign: true })
+      this.fetchSushiList()
+      this.fetchMyGari()
     },
     buy(sushi) {
       this.myGari -= sushi.price
