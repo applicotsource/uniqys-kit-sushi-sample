@@ -3,6 +3,7 @@
     <p>私のアドレス: {{ myAddress }}</p>
     <p>{{ myGari }} Gari</p>
     <button @click="generate()">にぎる</button>
+    <button @click="tap()">Gariをもらう</button>
     <div class="sushi-wrapper">
       <div class="sushi-box" v-for="sushi in sushiList" :key="sushi.id">
         <p>{{ myAddress === sushi.owner ? '私のおすし' : 'だれかのおすし' }}</p>
@@ -77,6 +78,10 @@ export default {
       const response = await this.client.get('/api/gari', { params: { address: this.myAddress } })
       const { balance } = response.data
       this.myGari = balance
+    },
+    async tap() {
+      await this.client.post('/api/tap', {}, { sign: true })
+      this.fetchMyGari()
     },
   },
   data() {

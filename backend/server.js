@@ -92,4 +92,12 @@ app.get('/api/gari', async (req, res) => {
   res.send({ balance })
 })
 
+app.post('/api/tap', async (req, res) => {
+  const sender = req.header('uniqys-sender')
+
+  const uri = `http://${INNER_API_HOST}:${INNER_API_PORT}/accounts/${sender}/balance`
+  await axios.put(uri, JSON.stringify([10000]), { headers: { 'Content-Type': 'application/json' } })
+  res.send()
+})
+
 app.listen(APP_PORT, APP_HOST) // listenを開始する
