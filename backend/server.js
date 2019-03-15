@@ -53,4 +53,33 @@ app.post('/api/generate', async (req, res) => {
   })
 })
 
+// カウンターの数字を取得する
+async function getCount () {
+  return new Promise((resolve, reject) => {
+    memcached.get('count', (err, result) => {
+      if (err) return reject(err)
+      if (typeof result === 'number') return resolve(result)
+      resolve(0)
+    })
+  })
+}
+
+// sushiオブジェクトの配列を取得する
+async function getSushiList (count) {
+  return new Promise((resolve, reject) => {
+    if (!count) return resolve([])
+    const ids = new Array(count).fill(0).map((_, i) => i + 1)
+    memcached.getMulti(ids.map(id => `sushi:${id}`), (err, results) => {
+      if (err) return reject(err)
+      resolve(ids.map(id => results[`sushi:${id}`]))
+    })
+  })
+}
+
+app.get('/api/sushiList', async (_, res) => {
+  const count = await getCount()
+  const sushiList = await getSushiList(count)
+  res.send({ sushiList });
+});
+
 app.listen(APP_PORT, APP_HOST) // listenを開始する
